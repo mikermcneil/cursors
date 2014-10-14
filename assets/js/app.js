@@ -3,6 +3,7 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', function ($scope){
 
   // Ensure `cursors` is an array
   $scope.cursors = [];
+  SCOPE = $scope;
 
 
   // Initial fetch to get cursors
@@ -25,10 +26,7 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', function ($scope){
     // (and cast ids)
     cursors = _.map(cursors, function (eachCursor){
       eachCursor.id = +eachCursor.id;
-      eachCursor.style = {
-        top: (eachCursor.y||0)+'px',
-        left: (eachCursor.x||0)+'px'
-      };
+      eachCursor.style = _getStyle(eachCursor);
       return eachCursor;
     });
 
@@ -42,7 +40,10 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', function ($scope){
   io.socket.post('/cursor', {
     name: 'Guest_'+(Math.floor(Math.random()*100000)),
     x: 0,
-    y: 0
+    y: 0,
+    red: (Math.floor(Math.random()*255)),
+    green: (Math.floor(Math.random()*255)),
+    blue: (Math.floor(Math.random()*255))
   }, function(myCursor, res) {
     if (res.statusCode >= 300 || res.statusCode < 200) {
       console.error('Error creating a cursor (status: %s): ', res.statusCode, '\nBody:\n',myCursor);
@@ -77,13 +78,14 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', function ($scope){
       // Cast id to an integer (just to be safe)
       event.data.id = event.data.id || event.id;
       event.data.id = +event.data.id;
+      event.id = event.data.id;
 
-      // (Re)build style object
-      event.data.style = {
-        top: (event.data.y||0)+'px',
-        left: (event.data.x||0)+'px'
-      };
-      console.log('Received socket event:',event.data);
+      // Merge in event's bundled `previous` data to get access to colors
+      event.data.red = event.data.red || event.previous.red;
+      event.data.green = event.data.green || event.previous.green;
+      event.data.blue = event.data.blue || event.previous.blue;
+
+      console.log('Received socket event:',event);
 
       switch(event.verb) {
 
@@ -92,6 +94,8 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', function ($scope){
           $scope.cursors.push(event.data);
 
           // Then refresh the DOM
+          // (Re)build style object
+          event.data.style = _getStyle(event.data);
           $scope.$apply();
           break;
 
@@ -107,6 +111,8 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', function ($scope){
           }
 
           // Finally, in either case, refresh the DOM
+          // (Re)build style object
+          (existingCursor || event.data).style = _getStyle(existingCursor || event.data);
           $scope.$apply();
           break;
 
@@ -115,7 +121,7 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', function ($scope){
       }
     }
     catch(e) {
-      console.error('Malformd comet event:',event);
+      console.error('Malformed comet event:',event, '( Error:',e,')');
       return;
     }
   });
@@ -124,4 +130,17 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', function ($scope){
 }]);
 
 
+/**
+ * [_getStyle description]
+ * @param  {[type]} cursorObj [description]
+ * @return {[type]}           [description]
+ */
+function _getStyle(cursorObj) {
+  cursorObj = cursorObj||{};
 
+  return {
+    top: (cursorObj.y||0)+'px',
+    left: (cursorObj.x||0)+'px',
+    'background-color': 'rgba('+cursorObj.red+','+cursorObj.green+','+cursorObj.blue+', 0.6)'
+  };
+}
