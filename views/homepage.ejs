@@ -5,10 +5,28 @@
     <div class="cursor"
          ng-repeat="cursor in cursors"
          ng-style="cursor.style">
-      <!-- <span>{{cursor.name}}</span> -->
+      <p ng-if="cursor.chat">
+        <br/>
+        <span>{{cursor.chat}}</span>
+      </p>
     </div>
 
+
+
+    <!-- <span class="my-cursor" ng-class="{'moving': myCursor.moving}"
+          ng-style="myCursor.style">
+      ▼
+    </span> -->
+
   </div>
+
+
+  <!-- chat input -->
+  <textarea
+    ng-model="myCursor.chat"
+    ng-keyup="typeInChatBox($event)"
+    ng-class="{'saying': myCursor.chat}">
+  </textarea>
 
 </div>
 

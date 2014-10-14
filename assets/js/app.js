@@ -1,9 +1,24 @@
 angular.module('PBJ', []);
-angular.module('PBJ').controller('AppCtrl', ['$scope', function ($scope){
+angular.module('PBJ').controller('AppCtrl', ['$scope', '$timeout', function ($scope, $timeout){
 
   // Ensure `cursors` is an array
   $scope.cursors = [];
+
+  // Track data about the global user cursor
+  $scope.myCursor = {};
+
+  // Hack for monitoring scope in dev
   SCOPE = $scope;
+
+
+
+  // Type in chat box
+  $scope.typeInChatBox = function (e){
+    _syncCursor($scope.myCursor);
+    // if (e.which === 13) {
+    //   $scope.myCursor.chat
+    // }
+  };
 
 
   // Initial fetch to get cursors
@@ -50,23 +65,38 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', function ($scope){
       return;
     }
 
+    // Save our generated name
+    $scope.myCursor.name = myCursor.name;
+
     // Start listening for cursor movement for the CURRENT USER
     // and update the server (throttled)
     $(window).mousemove(_.throttle(function onLocalCursorMovement(e) {
-      // console.log('fired mousemove');
+
+      // Temporarily light up own cursor position for context
+      $scope.myCursor.moving = true;
+
+      // Track current cursor position + id
+      $scope.myCursor.x = (+e.pageX||0);
+      $scope.myCursor.y = (+e.pageY||0);
+      $scope.myCursor.id = myCursor.id;
+
+      // $scope.myCursor.style = {
+      //   top: ((+e.pageY||0)-6)+'px',
+      //   left: ((+e.pageX||0)-6)+'px'
+      // };
+      // $scope.$apply();
+      // console.log('moving!');
+      $timeout.cancel($scope.myCursor.movingTimer);
+      $scope.myCursor.movingTimer = $timeout(function (){
+        // console.log('stopped!');
+        $scope.myCursor.moving = false;
+      }, 500);
 
       // Inform other users about our new local cursor position
-      io.socket.put('/cursor/'+myCursor.id, {
-        x: e.pageX,
-        y: e.pageY
-      }, function(data, res) {
-        if (res.statusCode >= 300 || res.statusCode < 200) {
-          console.error('Error updating local cursor position (status: %s): ', res.statusCode, '\nBody:\n',data);
-          return;
-        }
-      });
-    }, 30));
+      _syncCursor($scope.myCursor);
+    }, 40));
   });
+
 
 
   // Listen for socket events of OTHER cursors and update the DOM
@@ -143,4 +173,23 @@ function _getStyle(cursorObj) {
     left: (cursorObj.x||0)+'px',
     'background-color': 'rgba('+cursorObj.red+','+cursorObj.green+','+cursorObj.blue+', 0.6)'
   };
+}
+
+
+/**
+ * [_syncCursor description]
+ * @param  {[type]} cursorData [description]
+ * @return {[type]}            [description]
+ */
+function _syncCursor(cursorData){
+  io.socket.put('/cursor/'+cursorData.id, {
+    x: cursorData.x,
+    y: cursorData.y,
+    chat: cursorData.chat
+  }, function(data, res) {
+    if (res.statusCode >= 300 || res.statusCode < 200) {
+      console.error('Error updating local cursor position (status: %s): ', res.statusCode, '\nBody:\n',data);
+      return;
+    }
+  });
 }

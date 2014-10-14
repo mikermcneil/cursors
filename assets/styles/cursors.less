@@ -8,13 +8,55 @@ body, html, * {
   position: relative;
   width: 100%;
   height: 100%;
+
+
+
+  /* a particular cursor */
+  .cursor {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border-radius: 15px;
+  }
+
+
+  /* the global cursor (my cursor) */
+  cursor: none;
+  .my-cursor {
+    position: absolute;
+    z-index: 3;
+
+    display: inline-block;
+    color: #fdfdfd;
+    font-size: 10px;
+
+    transition: transform 0.2s ease, text-shadow 0.2s ease;
+    transform: scaleX(2.5) translateY(4px);
+    text-shadow:
+      0 1px 1px rgba(0,0,0,0.5);
+
+    &.moving {
+      transform: scaleX(2.5);
+      text-shadow:
+        0 2px 2px rgba(255,255,255,0.7),
+        0 10px 4px rgba(0,0,0,0.5);
+    }
+
+  }
+
+
 }
 
-/* a particular cursor */
-.cursor-land .cursor {
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  border-radius: 15px;
-}
+textarea {
+  position:fixed;
+  bottom:0;
+  width: 100%;
+  padding: 5px;
+  text-align: center;
+  height: 24px;
+  font-size: 18px;
 
+  &.saying {
+    box-shadow: 0 -5px 35px 10px rgba(0,255,255, 0.7);
+  }
+}
