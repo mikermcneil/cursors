@@ -4,7 +4,7 @@ body, html, * {
 }
 body, html {
   color: white;
-  font-family: 'Courier', serif;
+  font-family: 'Courier', monospace;
   background: #000;
 }
 
@@ -26,6 +26,7 @@ body, html {
     span {
       display: inline-block;
       width: 200px;
+      padding-top: 7px;
     }
   }
 
@@ -63,10 +64,41 @@ textarea {
   width: 100%;
   padding: 5px;
   text-align: center;
-  height: 24px;
+  height: 50px;
+  padding: 10px;
   font-size: 18px;
+  border: none;
+  background-color: rgba(255,255,255,0.6);
+  font-family: inherit;
+  &:focus {
+    background-color: rgba(255,255,255,0.9);
+    outline: none;
+  }
 
   &.saying {
-    box-shadow: 0 -5px 35px 10px rgba(0,255,255, 0.7);
+    // box-shadow: 0 -5px 35px 10px rgba(0,255,255, 0.7);
+    background-color: rgba(255,255,255,1);
   }
+
+}
+
+.placeholderText() {
+  color: rgba(0,0,0,0.7);
+}
+
+ /* WebKit browsers */
+::-webkit-input-placeholder {
+  .placeholderText();
+}
+/* Mozilla Firefox 4 to 18 */
+:-moz-placeholder {
+  .placeholderText();
+}
+/* Mozilla Firefox 19+ */
+::-moz-placeholder {
+  .placeholderText();
+}
+/* Internet Explorer 10+ */
+:-ms-input-placeholder {
+  .placeholderText();
 }
