@@ -65,6 +65,12 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', '$timeout', function ($sc
       return;
     }
 
+    // If a cursor with my id already exists on the page, delete it
+    var myCursorAlreadyExists = _.find($scope.cursors, { id: +myCursor.id });
+    if (myCursorAlreadyExists) {
+      _.remove($scope.cursors, { id: myCursorAlreadyExists.id });
+    }
+
     // Save our generated name
     $scope.myCursor.name = myCursor.name;
 
