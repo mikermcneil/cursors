@@ -1,0 +1,18 @@
+<form ng-app="PBJ" ng-controller="LoginCtrl">
+  <h1>Login and stuff</h1>
+  <input name="email" placeholder="foo@foobar.com" type="text"/>
+  <input name="password" placeholder="Password" type="password"/>
+  <button ng-click="intent.login()" class="btn btn-default">
+    <span ng-if="!loading">Submit</span>
+    <span ng-if="loading" class="spinner"></span>
+  </button>
+</form>
+
+
+
+<!--STYLES-->
+<!--STYLES END-->
+
+
+<!--SCRIPTS-->
+<!--SCRIPTS END-->
