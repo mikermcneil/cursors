@@ -31,7 +31,7 @@ body, html {
     }
     div.repo-list {
       position: absolute;
-      top: 20px;
+      top: 25px;
       ul {
         width: 150px;
         background-color: rgba(255,255,255,0.8);
@@ -39,9 +39,13 @@ body, html {
         >li {
           list-style-type: none;
           a {
+            color: #000;
             display: block;
             padding: 5px 10px;
             font-size: 15px;
+            overflow-x: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
           }
         }
       }
