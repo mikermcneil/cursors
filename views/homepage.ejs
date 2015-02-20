@@ -4,16 +4,16 @@
 
     <div class="cursor"
          ng-repeat="cursor in cursors"
+         ng-click="clickOnOtherCursor(cursor.id)"
          ng-style="cursor.style">
       <p ng-if="cursor.chat">
         <br/>
-        <span ng-click="reposVisible = !reposVisible">{{cursor.chat}}</span>
-        <div class="repo-list">
+        <span>{{cursor.chat}}</span>
+        <div class="repo-list" ng-show="cursor.reposVisible">
           <ul>
-            <li ng-repeat="repo in gitHubRepos | limitTo: 5"><a href="{{repo.url}}">{{repo.name}}</a></li>
-            <li><a>Testing</a></li>
-            <li><a>Styling It</a></li>
-            <li><a>Yeah</a></li>
+            <em ng-if="cursor.reposLoading">loading repos</em>
+            <em ng-if="cursor.repos.length==0 && !cursor.reposLoading">No repos or unrecognized GitHub username.</em>
+            <li ng-if="!cursor.reposLoading" ng-repeat="repo in cursor.repos | limitTo: 5"><a href="{{repo.url}}">{{repo.name}}</a></li>
           </ul>
         </div>
       </p>

@@ -20,6 +20,44 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', '$timeout', function ($sc
     // }
   };
 
+  // Click on a cursor
+  $scope.clickOnOtherCursor = function (cursorId){
+
+    var cursor = _.find($scope.cursors, {id: cursorId});
+    if (!cursor) return;
+    var username = cursor.chat;
+
+    // If already visible, hide
+    if (cursor.reposVisible) {
+      cursor.reposVisible = false;
+      return;
+    }
+
+    // If cursor has no "chat" (aka username), show empty state.
+    if (!cursor.chat) {
+      cursor.repos = [];
+      cursor.reposVisible = true;
+      return;
+    }
+
+    // Otherwise...
+    // If cursor has username, then load the list of repos
+    // and display them.
+    cursor.reposVisible = true;
+    cursor.reposLoading = true;
+
+    io.socket.get('/cursor/listSomeRepos', {
+      username: username
+    }, function (repos, jwr) {
+      cursor.reposLoading = false;
+      cursor.repos = repos;
+
+      // Toggle visibility
+      cursor.reposVisible = true;
+      $scope.$apply();
+    });
+  };
+
 
   // Initial fetch to get cursors
   // (only get ones who've been updated recently)
@@ -42,6 +80,8 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', '$timeout', function ($sc
     cursors = _.map(cursors, function (eachCursor){
       eachCursor.id = +eachCursor.id;
       eachCursor.style = _getStyle(eachCursor);
+      eachCursor.reposVisible = false;
+      eachCursor.repos = [];
       return eachCursor;
     });
 
@@ -73,6 +113,12 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', '$timeout', function ($sc
 
     // Save our generated name
     $scope.myCursor.name = myCursor.name;
+
+    // Show the "chat" in the textbox
+    $scope.myCursor.chat = myCursor.chat;
+
+    // Render
+    $scope.$apply();
 
     // Start listening for cursor movement for the CURRENT USER
     // and update the server (throttled)
@@ -132,6 +178,8 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', '$timeout', function ($sc
           // Then refresh the DOM
           // (Re)build style object
           event.data.style = _getStyle(event.data);
+          event.data.reposVisible = false;
+          event.data.repos = [];
           $scope.$apply();
           break;
 
@@ -150,6 +198,7 @@ angular.module('PBJ').controller('AppCtrl', ['$scope', '$timeout', function ($sc
           // (Re)build style object
           (existingCursor || event.data).style = _getStyle(existingCursor || event.data);
           $scope.$apply();
+
           break;
 
         default:
