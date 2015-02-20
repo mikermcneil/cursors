@@ -7,7 +7,15 @@
          ng-style="cursor.style">
       <p ng-if="cursor.chat">
         <br/>
-        <span>{{cursor.chat}}</span>
+        <span ng-click="reposVisible = !reposVisible">{{cursor.chat}}</span>
+        <div class="repo-list">
+          <ul>
+            <li ng-repeat="repo in gitHubRepos | limitTo: 5"><a href="{{repo.url}}">{{repo.name}}</a></li>
+            <li><a>Testing</a></li>
+            <li><a>Styling It</a></li>
+            <li><a>Yeah</a></li>
+          </ul>
+        </div>
       </p>
     </div>
 
