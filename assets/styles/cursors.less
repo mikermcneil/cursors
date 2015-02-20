@@ -28,20 +28,24 @@ body, html {
       width: 200px;
       padding-top: 7px;
       position: relative;
-      div.repo-list {
-        position: absolute;
-        top: 20px;
-        ul {
-          width: 150px;
-          background-color: rgba(255,255,255,0.8);
+    }
+    div.repo-list {
+      position: absolute;
+      top: 25px;
+      ul {
+        width: 150px;
+        background-color: rgba(255,255,255,0.8);
+        list-style-type: none;
+        >li {
           list-style-type: none;
-          >li {
-            list-style-type: none;
-            a {
-              display: block;
-              padding: 5px 10px;
-              font-size: 15px;
-            }
+          a {
+            color: #000;
+            display: block;
+            padding: 5px 10px;
+            font-size: 15px;
+            overflow-x: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
           }
         }
       }
