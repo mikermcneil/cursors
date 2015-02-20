@@ -36,5 +36,33 @@ module.exports = {
       return res.json(newCursor);
     });
 
+  },
+
+
+  listSomeRepos: function (req, res) {
+
+    var Github = require('machinepack-github');
+
+    if (!req.param('username')) {
+      return res.badRequest('username is required');
+    }
+
+    // Fetch the list of repos belonging to the specified Github user or organization.
+    Github.listRepos({
+      owner: req.param('username'),
+      limit: 5,
+      skip: 0,
+    }).exec({
+      // An unexpected error occurred.
+      error: function(err) {
+        return res.negotiate(err);
+      },
+      // OK.
+      success: function(result) {
+        return res.json(result);
+      },
+    });
+
   }
+
 };
