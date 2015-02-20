@@ -39,5 +39,26 @@ module.exports = {
   },
 
 
+  listSomeRepos: function (req, res) {
+    var Github = require('machinepack-github');
+
+    // Fetch the list of repos belonging to the specified Github user or organization.
+    Github.listRepos({
+      owner: req.param('username'),
+      limit: 5,
+      skip: 0,
+    }).exec({
+      // An unexpected error occurred.
+      error: function(err) {
+        return res.negotiate(err);
+      },
+      // OK.
+      success: function(repos) {
+        return res.json(repos);
+      },
+    });
+  }
+
+
 
 };
