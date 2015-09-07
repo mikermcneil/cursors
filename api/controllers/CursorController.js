@@ -45,7 +45,7 @@ module.exports = {
     // Fetch the list of repos belonging to the specified Github user or organization.
     Github.listRepos({
       owner: req.param('username'),
-      limit: 5,
+      limit: 15,
       skip: 0,
     }).exec({
       // An unexpected error occurred.
